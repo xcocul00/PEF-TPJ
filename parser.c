@@ -2,11 +2,14 @@
 
 
 int main(int argc, char *argv[]){
-	printf("START\n");
+	
 	token *tok;
+	read_file(argc,argv);
+	printf("START\n");
+		
 	tok= init_token();
+
 	tok = get_token();
-	printf("%d\n",tok->type );
-	printf("END\n");
-	return 0;
+	printf("token %d, \n",tok->type);
+	ERROR(ERR_OK,"OK");
 }
