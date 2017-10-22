@@ -8,6 +8,7 @@
 
 typedef enum {
 	UNDEFINED,  //0
+	END_OF_FILE,
 	TEST,
 } type_of_token;
 
@@ -43,3 +44,7 @@ const char * const key_words[] = {
 
 
 void ERROR(errors code, const char* message);
+void read_file(int argc,char **argv);
+char get_char();
+token * init_token();
+token * get_token();
