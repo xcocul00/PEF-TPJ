@@ -9,9 +9,14 @@ int main(int argc, char *argv[]){
 	printf("START\n");
 		
 	tok= init_token();
-
 	tok = get_token();
-	printf("token %d, \n",tok->type);
+
+	while(tok->type!=END_OF_FILE)
+	{
+		printf("token %d, %s\n",tok->type,tok->attribute);
+		tok = get_token();
+	}
+	
 	close_file();
-	ERROR(ERR_OK,"OK");
+	ERROR(ERR_OK," ");
 }

@@ -8,15 +8,22 @@ char next='\0';
 
 
 void read_file(int argc,char **argv){
-	if(argc==3)
+	if(argc==2)
 	{
-		file = fopen(argv[1],"r");
-		if(file==NULL){
-			printf("prazdny\n");
+		if(!strcmp(argv[1],"--help"))
+		{
+			help();
 		}
+		file = fopen(argv[1],"r");
 	}
 	else
-		ERROR(ERR_FAIL,"Bad params");
+		ERROR(ERR_FAIL,"Bad params, try use --help");
+}
+
+void help(){
+	printf("Using of CISCO parser :\n\t parser [input file]\n\t"
+			" parser [--help]\n");
+	ERROR(ERR_OK, " ");
 }
 
 void close_file(){
@@ -83,10 +90,49 @@ void skip_spaces(){
 	}
 }
 
+type_of_token char_type(char x){
+	type_of_token type=UNDEFINED;
+	switch (x) {
+		case '/':
+			type=TYPE_DIV;
+			break;
+		case '-':
+			type=TYPE_SUB;
+			break;
+		case '.':
+			type=TYPE_DOT;
+			break;
+		case ':':
+			type=TYPE_COLON;
+			break;
+		case '{':
+			type=TYPE_BLOCK_BEGIN;
+			break;
+		case '}':
+			type=TYPE_BLOCK_END;
+			break;
+		case '(':
+			type=TYPE_LEFT_BRACKET;
+			break;
+		case ')':
+			type=TYPE_RIGHT_BRACKET;
+			break;		
+	}
+	return type;
+}
+
+bool is_number(char x){
+	if(((int)x >= (int)'0') && ((int)x <= (int)'9'))
+		return true;
+	else
+		return false;
+}
 
 token * get_token(){
 	token *token;
 	token=init_token();
+	int cnt=1;
+	int lenght=1;
 	
 	if(actual=='\0'){
 		actual=get_char();
@@ -99,6 +145,31 @@ token * get_token(){
 		token->type=END_OF_FILE;
 		return token;
 	}
+	else if(char_type(actual)!=UNDEFINED){
+		token->type=char_type(actual);
+		actual='\0';
+		return token;
+	}
+	else if(is_number(actual)){
+		printf("START CISLA %c\n",actual);
+		char buff[BUFF_SIZE];
+		buff[0]=actual;
+		next=get_char();
+		while((next!=EOF) && (is_number(next)) && (cnt<=BUFF_SIZE) ){
+			printf("NEXT %c\n",next );
+			buff[lenght]=next;
+			cnt++;
+			lenght=cnt % BUFF_SIZE;
+			next=get_char();
+		}
+		printf("KONIEC CISLA %c\n",next);
+		buff[lenght]='\0';
+		token->attribute=(char *)malloc(100);
+		strncpy(token->attribute,buff,lenght);
+		printf("TOKEN %s\n",token->attribute);
+		token->type=TYPE_NUMBER;
+	}
+	actual=get_char();
 	return token;
 }
 

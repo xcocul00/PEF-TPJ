@@ -9,7 +9,17 @@
 typedef enum {
 	UNDEFINED,  //0
 	END_OF_FILE,
-	TEST,
+	
+	TYPE_DIV,	//2
+	TYPE_SUB,
+	TYPE_DOT,
+	TYPE_COLON,
+	TYPE_BLOCK_BEGIN,
+	TYPE_BLOCK_END,
+	TYPE_LEFT_BRACKET,
+	TYPE_RIGHT_BRACKET,
+
+	TYPE_NUMBER,		//10
 } type_of_token;
 
 typedef enum {
@@ -43,8 +53,10 @@ const char * const key_words[] = {
 
 
 
+void help();
 void ERROR(errors code, const char* message);
 void read_file(int argc,char **argv);
 char get_char();
 token * init_token();
 token * get_token();
+bool is_number(char x);
