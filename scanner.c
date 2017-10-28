@@ -151,23 +151,20 @@ token * get_token(){
 		return token;
 	}
 	else if(is_number(actual)){
-		printf("START CISLA %c\n",actual);
 		char buff[BUFF_SIZE];
 		buff[0]=actual;
 		next=get_char();
 		while((next!=EOF) && (is_number(next)) && (cnt<=BUFF_SIZE) ){
-			printf("NEXT %c\n",next );
 			buff[lenght]=next;
 			cnt++;
 			lenght=cnt % BUFF_SIZE;
 			next=get_char();
 		}
-		printf("KONIEC CISLA %c\n",next);
 		buff[lenght]='\0';
 		token->attribute=(char *)malloc(100);
 		strncpy(token->attribute,buff,lenght);
-		printf("TOKEN %s\n",token->attribute);
 		token->type=TYPE_NUMBER;
+		actual=next;
 	}
 	actual=get_char();
 	return token;
