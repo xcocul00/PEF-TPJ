@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#define KEY_COUNT 14
+#define KEY_COUNT 15
 
 typedef enum {
 	UNDEFINED,  //0
@@ -20,11 +20,30 @@ typedef enum {
 	TYPE_RIGHT_BRACKET,
 
 	TYPE_NUMBER,		//10
+	TYPE_WORD,
+
+	TYPE_BANNER,		//12
+	TYPE_MOTD,
+	TYPE_LOGIN,
+	TYPE_INT,
+	TYPE_SHUTDOWN,
+	TYPE_NO,
+	TYPE_RIP,
+	TYPE_RIPV2,
+	TYPE_EIGRP,
+	TYPE_OSPF,
+	TYPE_SUMMARY,
+	TYPE_CON,
+	TYPE_AUX,
+	TYPE_VTY,
+	TYPE_PASSWORD,
+
 } type_of_token;
 
 typedef enum {
 	ERR_OK,
-	ERR_FAIL,
+	ERR_PARAM, //bad params
+	ERR_FILE,  //file empty
 }errors;
 
 
@@ -40,15 +59,16 @@ const char * const key_words[] = {
 	"login",
 	"int",
 	"shutdown",
-	"not_shutdown",
+	"no",
 	"RIP",
 	"RIPv2",
 	"EIGRP",
 	"OSPF",
-	"no_auto_summary",
+	"summary",
 	"con",
 	"aux",
 	"vty",
+	"password",
 };
 
 

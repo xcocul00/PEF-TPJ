@@ -17,7 +17,7 @@ void read_file(int argc,char **argv){
 		file = fopen(argv[1],"r");
 	}
 	else
-		ERROR(ERR_FAIL,"Bad params, try use --help");
+		ERROR(ERR_PARAM,"Bad params, try use --help");
 }
 
 void help(){
@@ -33,12 +33,11 @@ void close_file(){
 }
 
 char get_char(){
-	if(file!=NULL){
-		return getc(file);}
-	else{
-		ERROR(ERR_FAIL,"Bad pdfarams");
-		return 'f';
-	}
+	if(file!=NULL)
+		return getc(file);
+
+	ERROR(ERR_FILE,"Bad pdfarams");
+	return 'f';
 }
 
 
@@ -128,12 +127,18 @@ bool is_number(char x){
 		return false;
 }
 
+bool is_word(char x){
+	if((((int)x >= (int)'A')&&((int)x <= (int)'Z')) || (((int)x >= (int)'a')&&((int)x <= (int)'z')))
+		return true;
+	else
+		return false;
+}
+
 token * get_token(){
 	token *token;
 	token=init_token();
 	int cnt=1;
 	int lenght=1;
-	
 	if(actual=='\0'){
 		actual=get_char();
 		skip_spaces();
@@ -150,6 +155,31 @@ token * get_token(){
 		actual='\0';
 		return token;
 	}
+	else if(is_word(actual) || actual=='#'){
+		char buff[BUFF_SIZE];
+		buff[0]=actual;
+		actual=get_char();
+		
+		while((actual!=EOF) && (is_word(actual) || is_number(actual) || actual=='#')){
+			buff[lenght]=actual;
+			cnt++;
+			lenght=cnt%BUFF_SIZE;
+			actual=get_char();
+		}
+		buff[lenght]='\0';
+		token->attribute=(char*)malloc(100);
+		strncpy(token->attribute,buff,lenght);
+		token->type=TYPE_WORD;
+
+		for(int i=0; i<KEY_COUNT; i++){
+			
+			if(!strcmp(key_words[i],buff)){
+				token->type=i+12;
+				token->attribute=NULL;
+			}
+		}
+
+	}
 	else if(is_number(actual)){
 		char buff[BUFF_SIZE];
 		buff[0]=actual;
@@ -164,9 +194,7 @@ token * get_token(){
 		token->attribute=(char *)malloc(100);
 		strncpy(token->attribute,buff,lenght);
 		token->type=TYPE_NUMBER;
-		//actual=next;
 	}
-	actual=get_char();
 	return token;
 }
 
