@@ -153,18 +153,18 @@ token * get_token(){
 	else if(is_number(actual)){
 		char buff[BUFF_SIZE];
 		buff[0]=actual;
-		next=get_char();
-		while((next!=EOF) && (is_number(next)) && (cnt<=BUFF_SIZE) ){
-			buff[lenght]=next;
+		actual=get_char();
+		while((actual!=EOF) && (is_number(actual)) && (cnt<=BUFF_SIZE) ){
+			buff[lenght]=actual;
 			cnt++;
 			lenght=cnt % BUFF_SIZE;
-			next=get_char();
+			actual=get_char();
 		}
 		buff[lenght]='\0';
 		token->attribute=(char *)malloc(100);
 		strncpy(token->attribute,buff,lenght);
 		token->type=TYPE_NUMBER;
-		actual=next;
+		//actual=next;
 	}
 	actual=get_char();
 	return token;
