@@ -1,12 +1,17 @@
 #include "scanner.h"
-
+// buffer size for writing text to token attribute
 #define BUFF_SIZE 101
+//file for reading input text
 static FILE* file;
-
+//valuebles used for compare chars
 char actual='\0';
 char next='\0';
 
-
+/*
+* function read from file and check input arguments
+* input -> argc,argv
+* output -> file with input text
+*/
 void read_file(int argc,char **argv){
 	if(argc==2)
 	{
@@ -20,18 +25,31 @@ void read_file(int argc,char **argv){
 		ERROR(ERR_PARAM,"Bad params, try use --help");
 }
 
+/*
+* function print help on console
+* input -> none
+* output -> help text
+*/
 void help(){
 	printf("Using of CISCO parser :\n\t parser [input file]\n\t"
 			" parser [--help]\n");
 	ERROR(ERR_OK, " ");
 }
-
+/*
+* function close file after read
+* input -> none
+* output -> none
+*/
 void close_file(){
 	if(file!=NULL){
 		fclose(file);
 	}
 }
-
+/*
+* function return next char from text
+* input -> file
+* output -> char
+*/
 char get_char(){
 	if(file!=NULL)
 		return getc(file);
@@ -39,22 +57,33 @@ char get_char(){
 	ERROR(ERR_FILE,"Bad pdfarams");
 	return 'f';
 }
-
-
+/*
+* function initialize new token
+* input -> none
+* output -> initialized token
+*/
 token * init_token(){
 	token *token = malloc (sizeof(token));
 	token->attribute = NULL;
 	token->type = UNDEFINED;
 	return token;
 }
-
+/*
+* function check if char is whitechar
+* input -> char
+* output -> boolean
+*/
 bool is_whitechar(char a){
 	if(((int)a == (int)' ') || ((int)a == (int)'\n') || ((int)a == (int)'\r') || ((int)a == (int)'\t'))
 		return true;
 	else
 		return false;
 }
-
+/*
+* function skip comments in text
+* input -> none
+* output -> text without comments
+*/
 void skip_comments(){
 	char a = get_char();
 	bool stop_cykle=false; 
@@ -75,7 +104,11 @@ void skip_comments(){
 	}
 	next='\0';
 }
-
+/*
+* function skip white spaces
+* input -> none
+* output -> none
+*/
 void skip_spaces(){
 	while(actual!=EOF && (is_whitechar(actual) || actual=='/')){
 		if(is_whitechar(actual))
@@ -88,7 +121,11 @@ void skip_spaces(){
 		
 	}
 }
-
+/*
+* function check used char types 
+* input -> char
+* output -> type of char
+*/
 type_of_token char_type(char x){
 	type_of_token type=UNDEFINED;
 	switch (x) {
@@ -119,21 +156,33 @@ type_of_token char_type(char x){
 	}
 	return type;
 }
-
+/*
+* function check if char is number
+* input -> char
+* output -> boolean
+*/
 bool is_number(char x){
 	if(((int)x >= (int)'0') && ((int)x <= (int)'9'))
 		return true;
 	else
 		return false;
 }
-
+/*
+* function check if char is word
+* input -> char
+* output -> boolean
+*/
 bool is_word(char x){
 	if((((int)x >= (int)'A')&&((int)x <= (int)'Z')) || (((int)x >= (int)'a')&&((int)x <= (int)'z')))
 		return true;
 	else
 		return false;
 }
-
+/*
+* main function of scanner, use all functions and return token to parser
+* input -> none
+* output -> token
+*/
 token * get_token(){
 	token *token;
 	token=init_token();
@@ -197,7 +246,11 @@ token * get_token(){
 	}
 	return token;
 }
-
+/*
+* function write error value to stdout
+* input -> return code, error message
+* output -> exit code with error message
+*/
 void ERROR(errors code, const char* message){
 	fprintf(stderr,"ERR:%d, %s\n",code,message);
 	exit(code);
