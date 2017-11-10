@@ -1,0 +1,7 @@
+R1 {
+	banner motd #baner#
+	banner login #baner#
+	password aux heslo
+	password con heslo
+	password vty 0-4
+}

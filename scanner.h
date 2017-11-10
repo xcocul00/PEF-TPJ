@@ -3,9 +3,13 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdint.h>
-
+// key word count
 #define KEY_COUNT 15
 
+/*
+* type of token
+* int number from 0 to 26
+*/
 typedef enum {
 	UNDEFINED,  //0
 	END_OF_FILE,
@@ -37,9 +41,11 @@ typedef enum {
 	TYPE_AUX,
 	TYPE_VTY,
 	TYPE_PASSWORD,
-
 } type_of_token;
 
+/*
+* error values
+*/
 typedef enum {
 	ERR_OK,
 	ERR_PARAM, //bad params
@@ -47,12 +53,15 @@ typedef enum {
 }errors;
 
 
-
+/*
+* token structure
+*/
 typedef struct {
 	char *attribute;
 	type_of_token type;
 }token;
 
+// key words
 const char * const key_words[] = {
 	"banner",
 	"motd",
@@ -72,11 +81,21 @@ const char * const key_words[] = {
 };
 
 
-
+// prototypes
 void help();
 void ERROR(errors code, const char* message);
 void read_file(int argc,char **argv);
-char get_char();
+void close_file();
+
 token * init_token();
 token * get_token();
+type_of_token char_type(char x);
+
+char get_char();
 bool is_number(char x);
+bool is_whitechar(char a);
+void skip_comments();
+void skip_spaces();
+bool is_number(char x);
+bool is_word(char x);
+

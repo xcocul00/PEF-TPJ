@@ -5,8 +5,6 @@ int main(int argc, char *argv[]){
 	
 	read_file(argc,argv);
 	token *tok;
-	
-	printf("START TESTU\n");
 		
 	tok= init_token();
 	tok = get_token();
