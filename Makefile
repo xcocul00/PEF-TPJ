@@ -1,4 +1,5 @@
 NAME=parser
+TESTS=tests
 TESTSCANNER=scanner-test
 
 CC=gcc
@@ -7,12 +8,13 @@ CFLAGS=-std=c99 -Wall -pedantic -g
 $(NAME): $(NAME).c
 				$(CC) $(CFLAGS) $(NAME).c -o $(NAME)
 
-$(TESTSCANNER): $(TESTSCANNER).c
-				$(CC) $(CFLAGS) $(TESTSCANNER).c -o $(TESTSCANNER)
+$(TESTS): $(TESTSCANNER).c
+		  $(CC) $(CFLAGS) $(TESTSCANNER).c -o $(TESTSCANNER)
+		  bash test-scanner.sh
 
 all:
 	$(CC) $(CFLAGS) $(NAME) -o NAME
-clean:
-	rm -f *.o *.core parser scanner-test
-scanner:
 	$(CC) $(CFLAGS) $(TESTSCANNER) -o TESTSCANNER
+clean:
+	rm -f *.o *.core parser scanner-test Testy/*.o Testy/*.err
+
