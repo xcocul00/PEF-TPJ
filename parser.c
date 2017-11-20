@@ -92,6 +92,30 @@ void password_block(){
 		ERROR(ERR_SYN,"Error missing password");
 }
 
+void interface_block(){
+	tok=get_token();
+	if(tok->type!=TYPE_WORD){
+		ERROR(ERR_SEM,"Error missing interface name");
+	}
+	else{
+		//PUSH eth NAME INTO NAME
+		printf("ETH : %s\n",tok->attribute );
+		tok=get_token();
+		if(tok->type==TYPE_LEFT_BRACKET){
+			tok=get_token();
+			while(tok->type!=TYPE_RIGHT_BRACKET && tok->type!=END_OF_FILE){
+				int a=atoi("cd");
+				printf("%d\n",a);
+				tok=get_token();
+				printf("%d a %s\n",tok->type, tok->attribute );
+			}
+		}
+		else
+			ERROR(ERR_SYN,"Error missing symbol (");
+	}
+
+}
+
 void main_body(){
 	printf("MAIN BODY\n");
 	token *tok=init_token();
@@ -106,9 +130,9 @@ void main_body(){
 		}
 		else if(tok->type==TYPE_INT){
 			printf("interfaces\n");
+			interface_block();
 		}
 		else if(tok->type==TYPE_PASSWORD){
-			printf("password\n");
 			password_block();
 			tok=get_token();
 		}
