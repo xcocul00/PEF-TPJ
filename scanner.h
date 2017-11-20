@@ -50,6 +50,7 @@ typedef enum {
 	ERR_OK,
 	ERR_PARAM, //bad params
 	ERR_FILE,  //file empty
+	ERR_SYN,   // syntax error
 }errors;
 
 
