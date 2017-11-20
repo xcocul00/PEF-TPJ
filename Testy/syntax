@@ -1,4 +1,4 @@
 R1 {
-	password Secret123
+	password vty 0-9 Secret123
 
 }

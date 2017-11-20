@@ -70,13 +70,15 @@ void password_block(){
 		else
 			second=atoi(tok->attribute);
 		result=second-first;
-		if(result<=0){
+		if(result<=0 || second>=10){
 			ERROR(ERR_SEM,"Error bad vty nums");
 		}
 		printf("VTY %d\n", result);
+		//PUSH RESULT INTO NUM
 	}
 	else if(tok->type==TYPE_WORD){
 		printf("JUST PASSWORD %s\n",tok->attribute);
+		//PUSH PASSWD INTO PASSWORD
 		return;
 	}
 	else
@@ -84,6 +86,7 @@ void password_block(){
 	tok=get_token();
 	if(tok->type==TYPE_WORD){
 		printf("PASSWORD %s\n",tok->attribute );
+		//PUSH PASSWD INTO PASSWORD
 	}
 	else
 		ERROR(ERR_SYN,"Error missing password");
