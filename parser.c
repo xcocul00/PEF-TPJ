@@ -24,11 +24,11 @@ void banner_block(){
 	tok=get_token();
 	if(tok->type==TYPE_MOTD){
 		//PUSH TRUE INTO MODE
-		printf("MOTD\n");
+		printf("BANNER MOTD\n");
 	}
 	else if(tok->type==TYPE_LOGIN){
 		//PUSH FALSE INTO MODE
-		printf("LOGIN\n");
+		printf("BANNER LOGIN\n");
 	}
 	else
 		ERROR(ERR_SYN,"Error after banner mode");
@@ -41,6 +41,54 @@ void banner_block(){
 		ERROR(ERR_SYN,"Error bad delimiter");
 }
 
+void password_block(){
+	tok=get_token();
+	if(tok->type==TYPE_CON){
+		printf("CON\n");
+		//PUSH CON INTO TYPE
+	}
+	else if(tok->type==TYPE_AUX){
+		printf("AUX\n");
+		//PUSH AUX INTO TYPE
+	}
+	else if(tok->type==TYPE_VTY){
+		int first,second,result;
+		//PUSH VTY INTO TYPE
+		tok=get_token();
+		if(tok->type!=TYPE_NUMBER){
+			ERROR(ERR_SYN,"Error in number vty consoles");
+		}
+		else
+			first=atoi(tok->attribute);
+		tok=get_token();
+		if(tok->type!=TYPE_SUB)
+			ERROR(ERR_SYN,"Error in number vty consoles");
+		tok=get_token();
+		if(tok->type!=TYPE_NUMBER){
+			ERROR(ERR_SYN,"Error in number vty consoles");
+		}
+		else
+			second=atoi(tok->attribute);
+		result=second-first;
+		if(result<=0){
+			ERROR(ERR_SEM,"Error bad vty nums");
+		}
+		printf("VTY %d\n", result);
+	}
+	else if(tok->type==TYPE_WORD){
+		printf("JUST PASSWORD %s\n",tok->attribute);
+		return;
+	}
+	else
+		ERROR(ERR_SYN,"Error in password block");
+	tok=get_token();
+	if(tok->type==TYPE_WORD){
+		printf("PASSWORD %s\n",tok->attribute );
+	}
+	else
+		ERROR(ERR_SYN,"Error missing password");
+}
+
 void main_body(){
 	printf("MAIN BODY\n");
 	token *tok=init_token();
@@ -50,7 +98,6 @@ void main_body(){
 			break;
 		}
 		else if(tok->type==TYPE_BANNER){
-			printf("banner\n");
 			banner_block();
 			tok=get_token();
 		}
@@ -59,6 +106,8 @@ void main_body(){
 		}
 		else if(tok->type==TYPE_PASSWORD){
 			printf("password\n");
+			password_block();
+			tok=get_token();
 		}
 		else
 		{
