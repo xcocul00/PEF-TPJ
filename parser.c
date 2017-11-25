@@ -92,7 +92,41 @@ void password_block(){
 		ERROR(ERR_SYN,"Error missing password");
 }
 
+void check_ip(bool ip){
+	char string[16];
+	for(int i=0; i<=3; i++){
+		int x = atoi(tok->attribute);
+		if(x>=0 && x<=255){
+			if(!i){
+				strcpy(string,tok->attribute);
+			}
+			else
+				strcat(string,tok->attribute);
+		}
+		else
+			ERROR(ERR_SEM,"Error IP not from 0-255");
+		if(i!=3){
+			tok=get_token();
+			if(tok->type!=TYPE_DOT){
+				ERROR(ERR_SYN,"Error missing . symbol");
+			}
+			else
+				strcat(string,".");
+		}
+		tok=get_token();
+	}
+	if(ip){
+		//PUSH IP
+		printf("IP %s\n",string);
+	}
+	else{
+		//PUSH MASK
+		printf("MASK %s\n",string);
+	}
+}
+
 void interface_block(){
+	bool ip=true;
 	tok=get_token();
 	if(tok->type!=TYPE_WORD){
 		ERROR(ERR_SEM,"Error missing interface name");
@@ -104,16 +138,41 @@ void interface_block(){
 		if(tok->type==TYPE_LEFT_BRACKET){
 			tok=get_token();
 			while(tok->type!=TYPE_RIGHT_BRACKET && tok->type!=END_OF_FILE){
-				int a=atoi("cd");
-				printf("%d\n",a);
-				tok=get_token();
-				printf("%d a %s\n",tok->type, tok->attribute );
+				if(tok->attribute==NULL){
+					if(tok->type==TYPE_SHUTDOWN){
+						// PUSH SHUTDOWN
+						printf("shutdown\n");
+						tok=get_token();
+					}
+					else if(tok->type==TYPE_NO){
+						//PUSH NO SHUTDOWN
+						printf("no shutdown\n");
+						tok=get_token();
+					}
+					else
+						ERROR(ERR_SYN,"Error in interface options");
+				}
+				else
+				{
+					if(atoi(tok->attribute)!=0){
+						check_ip(ip);
+					}
+					else if (atoi(tok->attribute)==0 && !strcmp(tok->attribute,"0")){
+						check_ip(ip);
+					}
+					else
+						ERROR(ERR_SYN,"Error in interface options");
+					ip=false;
+				}
 			}
 		}
 		else
 			ERROR(ERR_SYN,"Error missing symbol (");
 	}
+}
 
+void protokol_block(){
+	printf("asdasd\n");
 }
 
 void main_body(){
@@ -129,8 +188,10 @@ void main_body(){
 			tok=get_token();
 		}
 		else if(tok->type==TYPE_INT){
-			printf("interfaces\n");
+			printf("interfaces %s\n",tok->attribute);
 			interface_block();
+			tok=get_token();
+
 		}
 		else if(tok->type==TYPE_PASSWORD){
 			password_block();
@@ -140,6 +201,7 @@ void main_body(){
 		{
 			if(is_protocol(tok)){
 				printf("protokol\n");
+				protokol_block();
 			}
 			else
 				ERROR(ERR_SYN,"Error in main_body block");
