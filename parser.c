@@ -170,9 +170,62 @@ void interface_block(){
 			ERROR(ERR_SYN,"Error missing symbol (");
 	}
 }
+char * protokol_type(int type){
+	switch (type){
+		case TYPE_RIP:
+			return "RIP";
+		case TYPE_RIPV2:
+			return "RIPv2";
+		case TYPE_EIGRP:
+			return "EIGRP";
+		case TYPE_OSPF:
+			return "OSPF";
+		default:
+			return "ERR";
+	}
+}
 
-void protokol_block(){
-	printf("asdasd\n");
+void protokol_block(int x){
+	char protokol_name[5];
+	bool ip = true;
+	strcpy(protokol_name,protokol_type(x));
+	printf("PROTOKOL %s \n",protokol_name);
+	//PUSH INTO PROTOKOL
+	if(x==TYPE_EIGRP || x==TYPE_OSPF){
+		tok=get_token();
+		if(tok->attribute==NULL){
+			ERROR(ERR_SYN,"Error missing area");
+		}
+		else{
+			if(atoi(tok->attribute)!=0 || !strcmp(tok->attribute,"0")){
+				printf("AREA %s\n", tok->attribute);
+			}
+			else
+				ERROR(ERR_SYN,"Error missing area");
+		}
+	}
+	tok=get_token();
+	if(tok->type==TYPE_LEFT_BRACKET){
+		tok=get_token();
+		while(tok->type!=TYPE_RIGHT_BRACKET && tok->type!=END_OF_FILE){
+			if(tok->attribute==NULL){
+				ERROR(ERR_SYN,"Error in protokol options");
+			}
+			else
+			{
+				if(atoi(tok->attribute)!=0){
+					check_ip(ip);
+				}
+				else if (atoi(tok->attribute)==0 && !strcmp(tok->attribute,"0")){
+					check_ip(ip);
+				}
+				else
+					ERROR(ERR_SYN,"Error in protokol options");
+			}
+		}
+	}
+	else
+		ERROR(ERR_SYN,"Error missing symbol (");
 }
 
 void main_body(){
@@ -189,6 +242,7 @@ void main_body(){
 		}
 		else if(tok->type==TYPE_INT){
 			printf("interfaces %s\n",tok->attribute);
+			//PUSH INT NAME
 			interface_block();
 			tok=get_token();
 
@@ -200,8 +254,8 @@ void main_body(){
 		else
 		{
 			if(is_protocol(tok)){
-				printf("protokol\n");
-				protokol_block();
+				protokol_block(tok->type);
+				tok=get_token();
 			}
 			else
 				ERROR(ERR_SYN,"Error in main_body block");
