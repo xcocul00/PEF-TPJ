@@ -9,12 +9,12 @@ void Init_interfacesList(interface_list *L){
 	L->actual=NULL;
 	L->first=NULL;
 }
-
+/*
 void Init_routersList(routers_list *L){
 	L->actual=NULL;
 	L->first=NULL;
 }
-
+*/
 protocol_elementPTR init_protocol_elem(){
 	protocol_elementPTR element=malloc(sizeof(protocol_elementPTR));
 	element->name=0;
@@ -34,14 +34,13 @@ interface_elementPTR init_interface_elem(){
 	return element;
 }
 
-router_elementPTR init_router_elem(){
-	router_elementPTR element=malloc(sizeof(router_elementPTR));
+void init_router_elem(router_elementPTR *element){
+	element->name=malloc(sizeof(char *)*10);
 	element->banner_mode=false;
-	element->banner_message=NULL;
-	element->password=NULL;
+	element->banner_message=malloc(sizeof(char *)*32);
+	element->password=malloc(sizeof(char *)*30);
 	element->password_type=0;
 	element->vty_num=0;
-	return element;
 }
 
 void print_protocol(protocol_elementPTR node){
@@ -66,4 +65,15 @@ void print_interfaces(interface_elementPTR node){
 	else
 		printf("LAST\n******\n");
 }
+
+void print_routers(router_elementPTR *element){
+	printf("********ROUTER************\nROUTER: %s\n",element->name);
+	printf("BANNER MODE: %s\n", element->banner_mode?"true":"false" );
+	printf("MESSAGE: %s\n", element->banner_message);
+	printf("PASSWORD: %s\n",element->password );
+	printf("PASSWD TYPE: %d\n",element->password_type);
+	printf("VTY: %d\n", element->vty_num );
+	printf("************END ROUTER**********\n");
+}
+
 

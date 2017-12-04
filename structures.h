@@ -28,14 +28,13 @@ typedef struct {
 
 //ROUTERS
 typedef struct router_element{
-	struct router_element *next;
+	char *name;
 	bool banner_mode;
 	char *banner_message;
 	char *password;
 	int password_type; // 1-con 2-aux 3-vty
 	int vty_num;
-	// doplnit listy	
-}*router_elementPTR;
+}router_elementPTR;
 
 typedef struct {
 	router_elementPTR actual;

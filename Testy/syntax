@@ -1,10 +1,12 @@
 R1 {
-	int Eth0 (
-		192.168.9.5
+	banner motd #ahoj#
+	password aux heslo
+	int eth1 (
+		192.168.1.1
 		255.255.255.0
 		no
 	)
 	RIP (
-		255.255.255.0
+		192.168.1.0
 	)
 }
