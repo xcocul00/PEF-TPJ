@@ -24,11 +24,11 @@ void banner_block(router_elementPTR *router){
 	//printf("%d\n", router->password_type);
 	tok=get_token();
 	if(tok->type==TYPE_MOTD){
-		//PUSH TRUE INTO MODE
+		router->banner_mode=true;
 		//printf("BANNER MOTD\n");
 	}
 	else if(tok->type==TYPE_LOGIN){
-		//PUSH FALSE INTO MODE
+		router->banner_mode=false;
 		//printf("BANNER LOGIN\n");
 	}
 	else
@@ -36,25 +36,25 @@ void banner_block(router_elementPTR *router){
 	tok=get_token();
 	if(tok->type==TYPE_WORD){
 		//printf("MESSAGE %s\n",tok->attribute);
-		//PUSH MESSAGE INTO MESSAGE
+		router->banner_message=tok->attribute;
 	}
 	else
 		ERROR(ERR_SYN,"Error bad delimiter");
 }
 
-void password_block(){
+void password_block(router_elementPTR *router){
 	tok=get_token();
 	if(tok->type==TYPE_CON){
 		//printf("CON\n");
-		//PUSH CON INTO TYPE
+		router->password_type=1;
 	}
 	else if(tok->type==TYPE_AUX){
 		//printf("AUX\n");
-		//PUSH AUX INTO TYPE
+		router->password_type=2;
 	}
 	else if(tok->type==TYPE_VTY){
 		int first,second,result;
-		//PUSH VTY INTO TYPE
+		router->password_type=3;
 		tok=get_token();
 		if(tok->type!=TYPE_NUMBER){
 			ERROR(ERR_SYN,"Error in number vty consoles");
@@ -74,12 +74,11 @@ void password_block(){
 		if(result<=0 || second>=10){
 			ERROR(ERR_SEM,"Error bad vty nums");
 		}
-		//printf("VTY %d\n", result);
-		//PUSH RESULT INTO NUM
+		router->vty_num=result;
 	}
 	else if(tok->type==TYPE_WORD){
 		//printf("JUST PASSWORD %s\n",tok->attribute);
-		//PUSH PASSWD INTO PASSWORD
+		router->password=tok->attribute;
 		return;
 	}
 	else
@@ -87,7 +86,7 @@ void password_block(){
 	tok=get_token();
 	if(tok->type==TYPE_WORD){
 		//printf("PASSWORD %s\n",tok->attribute );
-		//PUSH PASSWD INTO PASSWORD
+		router->password=tok->attribute;
 	}
 	else
 		ERROR(ERR_SYN,"Error missing password");
@@ -244,7 +243,6 @@ void protokol_block(int x){
 void main_body(router_elementPTR *router){
 	token *tok=init_token();
 	tok=get_token();
-	router->password_type=1;
 	while(tok->type!=TYPE_BLOCK_END){
 		if(tok->type==END_OF_FILE){
 			break;
@@ -261,7 +259,7 @@ void main_body(router_elementPTR *router){
 
 		}
 		else if(tok->type==TYPE_PASSWORD){
-			password_block();
+			password_block(router);
 			tok=get_token();
 		}
 		else
