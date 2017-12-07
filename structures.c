@@ -77,3 +77,9 @@ void print_routers(router_elementPTR *element){
 }
 
 
+void free_router(router_elementPTR *element){
+	free(element->name);
+	free(element->banner_message);
+	free(element->password);
+}
+

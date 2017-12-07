@@ -21,21 +21,17 @@ bool is_protocol(token *tok){
 }
 
 void banner_block(router_elementPTR *router){
-	//printf("%d\n", router->password_type);
 	tok=get_token();
 	if(tok->type==TYPE_MOTD){
 		router->banner_mode=true;
-		//printf("BANNER MOTD\n");
 	}
 	else if(tok->type==TYPE_LOGIN){
 		router->banner_mode=false;
-		//printf("BANNER LOGIN\n");
 	}
 	else
 		ERROR(ERR_SYN,"Error after banner mode");
 	tok=get_token();
 	if(tok->type==TYPE_WORD){
-		//printf("MESSAGE %s\n",tok->attribute);
 		router->banner_message=tok->attribute;
 	}
 	else
@@ -45,11 +41,9 @@ void banner_block(router_elementPTR *router){
 void password_block(router_elementPTR *router){
 	tok=get_token();
 	if(tok->type==TYPE_CON){
-		//printf("CON\n");
 		router->password_type=1;
 	}
 	else if(tok->type==TYPE_AUX){
-		//printf("AUX\n");
 		router->password_type=2;
 	}
 	else if(tok->type==TYPE_VTY){
@@ -77,7 +71,6 @@ void password_block(router_elementPTR *router){
 		router->vty_num=result;
 	}
 	else if(tok->type==TYPE_WORD){
-		//printf("JUST PASSWORD %s\n",tok->attribute);
 		router->password=tok->attribute;
 		return;
 	}
@@ -85,7 +78,6 @@ void password_block(router_elementPTR *router){
 		ERROR(ERR_SYN,"Error in password block");
 	tok=get_token();
 	if(tok->type==TYPE_WORD){
-		//printf("PASSWORD %s\n",tok->attribute );
 		router->password=tok->attribute;
 	}
 	else
@@ -278,7 +270,6 @@ void main_body(router_elementPTR *router){
 int main(int argc, char *argv[]){
 	
 	read_file(argc,argv);
-	//printf("START\n");
 	router_elementPTR router;
 	init_router_elem(&router);
 	
@@ -290,8 +281,6 @@ int main(int argc, char *argv[]){
 		tok = get_token();
 		if(tok->type==TYPE_WORD)
 		{
-			////printf("Rname : %s\n",tok->attribute);
-			//PUSH TO STRUCT
 			router.name=tok->attribute;
 			tok=get_token();
 			if(tok->type==TYPE_BLOCK_BEGIN){
@@ -307,30 +296,9 @@ int main(int argc, char *argv[]){
 			ERROR(ERR_SYN,"No router name");
 	}
 
-	
-	/*
-	//printf("token %d, %s\n",tok->type,tok->attribute);
-	
-	while(tok->type!=END_OF_FILE)
-	{
-		////printf("token %d, %s\n",tok->type,tok->attribute);
-		tok = get_token();
-	}
-	*/
-	//protocol_elementPTR node;
-	//node=init_protocol_elem();
-	//interface_elementPTR node2;
-	//node2=init_interface_elem();
-	
-	//print_protocol(node);
-	/*
-	//printf("%s\n",config_first_part );
-	//printf("%s\n",config_second_part );
-	//printf("%s\n",config_third_part );
-	//printf("%s\n",config_fourth_part );*/
 	print_routers(&router);
 	free(tok);
-	//free(router);
+	free_router(&router);
 	close_file();
 	ERROR(ERR_OK,"END");
 }
