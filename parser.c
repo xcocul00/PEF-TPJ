@@ -1,6 +1,7 @@
 #include "scanner.c"
 #include "parser.h"
 #include "structures.c"
+#include "text_creator.c"
 
 token *tok;
 //
@@ -110,28 +111,28 @@ char* check_ip(){
 	return string;
 }
 
-void interface_block(){
+void interface_block(interface_elementPTR *interfaces){
 	bool ip=true;
 	char address[15];
+
 	tok=get_token();
 	if(tok->type!=TYPE_WORD){
 		ERROR(ERR_SEM,"Error missing interface name");
 	}
 	else{
-		//PUSH eth NAME INTO NAME
-		//printf("ETH : %s\n",tok->attribute );
+		interfaces->name=tok->attribute;
 		tok=get_token();
 		if(tok->type==TYPE_LEFT_BRACKET){
 			tok=get_token();
 			while(tok->type!=TYPE_RIGHT_BRACKET && tok->type!=END_OF_FILE){
+				
 				if(tok->attribute==NULL){
 					if(tok->type==TYPE_SHUTDOWN){
-						// PUSH SHUTDOWN
-						//printf("shutdown\n");
+						interfaces->state=false;
 						tok=get_token();
 					}
 					else if(tok->type==TYPE_NO){
-						//PUSH NO SHUTDOWN
+						interfaces->state=true;
 						//printf("no shutdown\n");
 						tok=get_token();
 					}
@@ -149,10 +150,12 @@ void interface_block(){
 					else
 						ERROR(ERR_SYN,"Error in interface options");
 					if(ip){
-						//printf("IP ADDR: %s\n", address);
+						strcpy(interfaces->IP,address);
+
 					}
-					else
-						//printf("MASK ADDR: %s\n", address);
+					else{
+						strcpy(interfaces->MASK,address);
+					}
 					ip=false;
 				}
 			}
@@ -233,6 +236,8 @@ void protokol_block(int x){
 }
 
 void main_body(router_elementPTR *router){
+	char *tmp=(char *) malloc(sizeof(char) * 200);
+	strcpy(tmp,"!\n!");
 	token *tok=init_token();
 	tok=get_token();
 	while(tok->type!=TYPE_BLOCK_END){
@@ -244,9 +249,10 @@ void main_body(router_elementPTR *router){
 			tok=get_token();
 		}
 		else if(tok->type==TYPE_INT){
-			//printf("interfaces %s\n",tok->attribute);
-			//PUSH INT NAME
-			interface_block();
+			interface_elementPTR interfaces;
+			init_interface_elem(&interfaces);
+			interface_block(&interfaces);
+			strcat(tmp,get_interface_string(&interfaces));
 			tok=get_token();
 
 		}
@@ -264,7 +270,9 @@ void main_body(router_elementPTR *router){
 				ERROR(ERR_SYN,"Error in main_body block");
 
 		}
+	
 	}
+	strcpy(router->interface_list,tmp);
 }
 
 int main(int argc, char *argv[]){
