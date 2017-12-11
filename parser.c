@@ -164,28 +164,15 @@ void interface_block(interface_elementPTR *interfaces){
 			ERROR(ERR_SYN,"Error missing symbol (");
 	}
 }
-char * protokol_type(int type){
-	switch (type){
-		case TYPE_RIP:
-			return "RIP";
-		case TYPE_RIPV2:
-			return "RIPv2";
-		case TYPE_EIGRP:
-			return "EIGRP";
-		case TYPE_OSPF:
-			return "OSPF";
-		default:
-			return "ERR";
-	}
-}
 
-void protokol_block(int x){
+void protokol_block(int x, protocol_elementPTR *protocols){
 	char protokol_name[5];
 	char address[150];
 	bool flag = false;
 	strcpy(protokol_name,protokol_type(x));
+	//printf("protocols: %d\n",protocols->name);
 	//printf("PROTOKOL %s \n",protokol_name);
-	//PUSH INTO PROTOKOL
+	protocols->name=x;
 	if(x==TYPE_EIGRP || x==TYPE_OSPF){
 		tok=get_token();
 		if(tok->attribute==NULL){
@@ -194,6 +181,7 @@ void protokol_block(int x){
 		else{
 			if(atoi(tok->attribute)!=0 || !strcmp(tok->attribute,"0")){
 				//printf("AREA %s\n", tok->attribute);
+				protocols->system=atoi(tok->attribute);
 			}
 			else
 				ERROR(ERR_SYN,"Error missing area");
@@ -229,14 +217,16 @@ void protokol_block(int x){
 				flag=true;
 			}
 		}
+		strcpy(protocols->networks, address);
+		//printf("%s\n", address);
 	}
 	else
 		ERROR(ERR_SYN,"Error missing symbol (");
-	//printf("MASKS:\n%s\n", address);
 }
 
 void main_body(router_elementPTR *router){
-	char *tmp=(char *) malloc(sizeof(char) * 200);
+	char *tmp=(char *) malloc(sizeof(char) * 100);
+	char *tmp2=(char *) malloc(sizeof(char) * 100);
 	strcpy(tmp,"!\n!");
 	token *tok=init_token();
 	tok=get_token();
@@ -263,7 +253,11 @@ void main_body(router_elementPTR *router){
 		else
 		{
 			if(is_protocol(tok)){
-				protokol_block(tok->type);
+				protocol_elementPTR protocols;
+				init_protocol_elem(&protocols);
+				protokol_block(tok->type,&protocols);
+				get_protocol_string(&protocols);
+				strcat(tmp2,get_protocol_string(&protocols));
 				tok=get_token();
 			}
 			else
@@ -273,6 +267,9 @@ void main_body(router_elementPTR *router){
 	
 	}
 	strcpy(router->interface_list,tmp);
+	//strcat(router->interface_list,tmp2);
+	//printf("TMP2:%s\n", tmp2);
+	//strcpy(router->protocol_list,tmp2);
 }
 
 int main(int argc, char *argv[]){
@@ -280,7 +277,8 @@ int main(int argc, char *argv[]){
 	read_file(argc,argv);
 	router_elementPTR router;
 	init_router_elem(&router);
-	
+	char *text=(char *) malloc(sizeof(char) * 3000);
+
 	tok=init_token();
 	tok->type=UNDEFINED;
 	while(tok->type!=END_OF_FILE){
@@ -293,6 +291,7 @@ int main(int argc, char *argv[]){
 			tok=get_token();
 			if(tok->type==TYPE_BLOCK_BEGIN){
 				main_body(&router);
+				strcpy(text,create_text(&router));
 			}
 			else
 				ERROR(ERR_SYN,"Symbol { missing after R-name");		
@@ -303,10 +302,10 @@ int main(int argc, char *argv[]){
 		else
 			ERROR(ERR_SYN,"No router name");
 	}
-
+	//printf("%s\n", text);
 	print_routers(&router);
-	free(tok);
-	free_router(&router);
+	//free(tok);
+	//free_router(&router);
 	close_file();
 	ERROR(ERR_OK,"END");
 }

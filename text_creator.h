@@ -2,4 +2,4 @@
 #define ip_add "\n ip address "
 #define space " "
 #define line "\n"
-#define end "\n!\n"
+#define end "\n!\n!\n"

@@ -1,15 +1,13 @@
 
 //PROTOCOLS
 typedef struct protocol_element {
-	struct protocol_element *next;
 	int name;
 	int system;
 	char *networks;	
-}*protocol_elementPTR;
+}protocol_elementPTR;
 
 //INTERFACES
 typedef struct interface_element {
-	//struct interface_element *next;
 	char *name;
 	char *IP;
 	char *MASK;
@@ -26,6 +24,7 @@ typedef struct router_element{
 	int password_type; //0-en 1-con 2-aux 3-vty
 	int vty_num;
 	char *interface_list;
+	char *protocol_list;
 }router_elementPTR;
 
 typedef struct {
