@@ -200,7 +200,7 @@ void protokol_block(int x, protocol_elementPTR *protocols){
 					if(!flag)
 						strcpy(address,check_ip());
 					else{
-						strcat(address,"\n");
+						strcat(address,"\n ");
 						strcat(address,check_ip());
 					}
 				}
@@ -208,7 +208,7 @@ void protokol_block(int x, protocol_elementPTR *protocols){
 					if(!flag)
 						strcpy(address,check_ip());
 					else{
-						strcat(address,"\n");
+						strcat(address,"\n ");
 						strcat(address,check_ip());
 					}
 				}
@@ -227,7 +227,7 @@ void protokol_block(int x, protocol_elementPTR *protocols){
 void main_body(router_elementPTR *router){
 	char *tmp=(char *) malloc(sizeof(char) * 100);
 	char *tmp2=(char *) malloc(sizeof(char) * 100);
-	strcpy(tmp,"!\n!");
+	strcpy(tmp,"!\n!\n");
 	token *tok=init_token();
 	tok=get_token();
 	while(tok->type!=TYPE_BLOCK_END){
@@ -302,8 +302,8 @@ int main(int argc, char *argv[]){
 		else
 			ERROR(ERR_SYN,"No router name");
 	}
-	//printf("%s\n", text);
-	print_routers(&router);
+	printf("%s\n", text);
+	//print_routers(&router);
 	//free(tok);
 	//free_router(&router);
 	close_file();

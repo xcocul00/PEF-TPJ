@@ -1,6 +1,6 @@
 R1 {
 	banner motd #ahoj#
-	password aux heslo
+	password vty 0-3 heslo
 	
 		int eth1 (
 		192.168.1.1
@@ -19,5 +19,9 @@ R1 {
 	EIGRP 9 (
 		192.168.1.0
 		192.168.3.0
+	)
+
+	RIP (
+		192.168.1.1
 	)
 }
