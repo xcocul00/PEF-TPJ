@@ -1,11 +1,17 @@
 #include "structures.h"
 
+/*
+* function initialize protcol element
+*/
 void init_protocol_elem(protocol_elementPTR *element){
 	element->networks=malloc(sizeof(char *)*100);
 	element->name=0;
 	element->system=0;
 }
 
+/*
+* function initialize interface element
+*/
 void init_interface_elem(interface_elementPTR *element){
 	element->name=malloc(sizeof(char *)*8);
 	element->IP=malloc(sizeof(char *)*20);
@@ -13,7 +19,9 @@ void init_interface_elem(interface_elementPTR *element){
 	element->state=false;
 }
 
-
+/*
+* function initialize router element
+*/
 void init_router_elem(router_elementPTR *element){
 	element->name=malloc(sizeof(char *)*10);
 	element->banner_mode=false;
@@ -22,9 +30,20 @@ void init_router_elem(router_elementPTR *element){
 	element->password_type=0;
 	element->vty_num=0;
 	element->interface_list=malloc(sizeof(char *)*100);
-	element->protocol_list=malloc(sizeof(char *)*100);
+}
+/*
+* function release router element memory
+*/
+void free_router(router_elementPTR *element){
+	free(element->name);
+	free(element->banner_message);
+	free(element->password);
 }
 
+/* HELPFULL functions
+* functions just print structure informations
+* debug only
+*/
 void print_protocol(protocol_elementPTR *node){
 	printf("*****\nPRINT PROTOKOL %d\n",node->name);
 	printf("AS/ID/AREA %d\n",node->system);
@@ -46,14 +65,9 @@ void print_routers(router_elementPTR *element){
 	printf("PASSWD TYPE: %d\n",element->password_type);
 	printf("VTY: %d\n", element->vty_num );
 	printf("INTERFACES:\n%s\n",element->interface_list);
-	//printf("PROTOCOLS:\n%s\n",element->protocol_list);
 	printf("************END ROUTER**********\n");
 }
 
 
-void free_router(router_elementPTR *element){
-	free(element->name);
-	free(element->banner_message);
-	free(element->password);
-}
+
 

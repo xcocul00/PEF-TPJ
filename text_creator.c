@@ -1,5 +1,10 @@
 #include "text_creator.h"
 
+/*
+* function return protocol name from type
+* input -> integer of token type
+* output -> protocol name
+*/
 char * protokol_type(int type){
 	switch (type){
 		case TYPE_RIP:
@@ -15,12 +20,22 @@ char * protokol_type(int type){
 	}
 }
 
+/*
+* function delete delimiter from banner text
+* input -> banner message
+* output -> banner message without delimiter
+*/
 char * parse_banner(char * string){
 	string++;
 	string[strlen(string)-1] = 0;
 	return string;
 }
 
+/*
+* function return configuration of interface part
+* input -> interfaces configuration in struture
+* output -> configuration of interfaces in string
+*/
 char * get_interface_string(interface_elementPTR *list){
 	char *string = (char *) malloc(sizeof(char) * 100);
 	strcpy(string,intf);
@@ -41,6 +56,11 @@ char * get_interface_string(interface_elementPTR *list){
 	return string;
 }
 
+/*
+* function return configuration of protocol part
+* input -> protocol configuration in struture
+* output -> configuration of protocols in string
+*/
 char* get_protocol_string(protocol_elementPTR *list){
 	char *string = (char *) malloc(sizeof(char) * 100);
 	strcpy(string,"router ");
@@ -58,6 +78,11 @@ char* get_protocol_string(protocol_elementPTR *list){
 	return string;
 }
 
+/*
+* function return configuration text
+* input -> router information structure
+* output -> all text parts together in final string
+*/
 char* create_text(router_elementPTR *list){
 	char *string = (char *) malloc(sizeof(char) * 2000);
 	strcpy(string,config_first_part);
@@ -79,7 +104,6 @@ char* create_text(router_elementPTR *list){
 		else{
 			strcat(string,"banner login ");
 		}
-		//strcat(string,list->banner_message);
 		strcat(string,parse_banner(list->banner_message));
 		strcat(string,end);
 	}
@@ -108,7 +132,5 @@ char* create_text(router_elementPTR *list){
 	}
 	strcat(string," login\n!\n");
 	strcat(string,config_fourth_part);	
-	//hesla atd
 	return string;
-
 }

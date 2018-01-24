@@ -1,11 +1,29 @@
 #include "scanner.c"
 #include "parser.h"
-#include "structures.c"
 #include "text_creator.c"
 
 token *tok;
-//
 
+/*
+* function write final config to text file
+* input -> file name, router configuration
+* output -> file
+*/
+void print_file(char * name, char * text){
+	FILE *f;
+	strcat(name,".txt");
+	f=fopen(name, "w");
+	if(f == NULL)
+	    ERROR(ERR_FILE,"Cannot write file");
+	fprintf(f, text);
+	fclose(f);
+}
+
+/*
+* function check if token is protocol name
+* input -> token
+* output -> boolean
+*/
 bool is_protocol(token *tok){
 	switch (tok->type) {
 		case TYPE_RIP:
@@ -21,6 +39,11 @@ bool is_protocol(token *tok){
 	}
 }
 
+/*
+* function parse banner information
+* input -> router config structure
+* output -> modified structure with banner information
+*/
 void banner_block(router_elementPTR *router){
 	tok=get_token();
 	if(tok->type==TYPE_MOTD){
@@ -39,6 +62,11 @@ void banner_block(router_elementPTR *router){
 		ERROR(ERR_SYN,"Error bad delimiter");
 }
 
+/*
+* function parse password information
+* input -> router config structure
+* output -> modified structure with password information
+*/
 void password_block(router_elementPTR *router){
 	tok=get_token();
 	if(tok->type==TYPE_CON){
@@ -67,11 +95,13 @@ void password_block(router_elementPTR *router){
 			second=atoi(tok->attribute);
 		result=second-first;
 		if(result<=0 || second>=10){
+			// count of vty is max 9
 			ERROR(ERR_SEM,"Error bad vty nums");
 		}
 		router->vty_num=result;
 	}
 	else if(tok->type==TYPE_WORD){
+		// password write to structure
 		router->password=tok->attribute;
 		return;
 	}
@@ -85,6 +115,11 @@ void password_block(router_elementPTR *router){
 		ERROR(ERR_SYN,"Error missing password");
 }
 
+/*
+* function parse IP address
+* input -> none
+* output -> string with checked and connected parts of IP address
+*/
 char* check_ip(){
 	char *string = (char *) malloc(sizeof(char) * 16);
 	for(int i=0; i<=3; i++){
@@ -111,6 +146,11 @@ char* check_ip(){
 	return string;
 }
 
+/*
+* function parse interfaces information
+* input -> router config structure
+* output -> modified structure with interfaces information
+*/
 void interface_block(interface_elementPTR *interfaces){
 	bool ip=true;
 	char address[15];
@@ -133,7 +173,6 @@ void interface_block(interface_elementPTR *interfaces){
 					}
 					else if(tok->type==TYPE_NO){
 						interfaces->state=true;
-						//printf("no shutdown\n");
 						tok=get_token();
 					}
 					else
@@ -165,13 +204,16 @@ void interface_block(interface_elementPTR *interfaces){
 	}
 }
 
+/*
+* function parse protocols information
+* input -> router config structure
+* output -> modified structure with protocols information
+*/
 void protokol_block(int x, protocol_elementPTR *protocols){
 	char protokol_name[5];
 	char address[150];
 	bool flag = false;
 	strcpy(protokol_name,protokol_type(x));
-	//printf("protocols: %d\n",protocols->name);
-	//printf("PROTOKOL %s \n",protokol_name);
 	protocols->name=x;
 	if(x==TYPE_EIGRP || x==TYPE_OSPF){
 		tok=get_token();
@@ -180,7 +222,6 @@ void protokol_block(int x, protocol_elementPTR *protocols){
 		}
 		else{
 			if(atoi(tok->attribute)!=0 || !strcmp(tok->attribute,"0")){
-				//printf("AREA %s\n", tok->attribute);
 				protocols->system=atoi(tok->attribute);
 			}
 			else
@@ -218,12 +259,16 @@ void protokol_block(int x, protocol_elementPTR *protocols){
 			}
 		}
 		strcpy(protocols->networks, address);
-		//printf("%s\n", address);
 	}
 	else
 		ERROR(ERR_SYN,"Error missing symbol (");
 }
 
+/*
+* function parse symbols between symbol { and }
+* input -> router config structure
+* output -> modified structure
+*/
 void main_body(router_elementPTR *router){
 	char *tmp=(char *) malloc(sizeof(char) * 100);
 	char *tmp2=(char *) malloc(sizeof(char) * 100);
@@ -244,7 +289,6 @@ void main_body(router_elementPTR *router){
 			interface_block(&interfaces);
 			strcat(tmp,get_interface_string(&interfaces));
 			tok=get_token();
-
 		}
 		else if(tok->type==TYPE_PASSWORD){
 			password_block(router);
@@ -262,28 +306,26 @@ void main_body(router_elementPTR *router){
 			}
 			else
 				ERROR(ERR_SYN,"Error in main_body block");
-
 		}
-	
 	}
 	strcpy(router->interface_list,tmp);
-	//strcat(router->interface_list,tmp2);
-	//printf("TMP2:%s\n", tmp2);
-	//strcpy(router->protocol_list,tmp2);
 }
 
+/*
+* main function, call other functions
+* input -> program input arguments
+* output -> routers configuration
+*/
 int main(int argc, char *argv[]){
 	
 	read_file(argc,argv);
 	router_elementPTR router;
 	init_router_elem(&router);
 	char *text=(char *) malloc(sizeof(char) * 3000);
-
 	tok=init_token();
+
 	tok->type=UNDEFINED;
 	while(tok->type!=END_OF_FILE){
-
-
 		tok = get_token();
 		if(tok->type==TYPE_WORD)
 		{
@@ -301,11 +343,8 @@ int main(int argc, char *argv[]){
 		}
 		else
 			ERROR(ERR_SYN,"No router name");
+		print_file(router.name,text);
 	}
-	printf("%s\n", text);
-	//print_routers(&router);
-	//free(tok);
-	//free_router(&router);
 	close_file();
 	ERROR(ERR_OK,"END");
 }

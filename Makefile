@@ -16,5 +16,5 @@ all:
 	$(CC) $(CFLAGS) $(NAME) -o NAME
 	$(CC) $(CFLAGS) $(TESTSCANNER) -o TESTSCANNER
 clean:
-	rm -f *.o *.core parser scanner-test Testy/*.o Testy/*.err
+	rm -f *.o *.core parser scanner-test Testy/*.o Testy/*.err *.txt
 
