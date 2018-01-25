@@ -1,0 +1,12 @@
+R1 {
+	banner motd #ahoj#
+	password aux heslo
+	int eth1 (
+		192.168.1.1
+		255.255.255.0
+		no
+	)
+	RIPE (
+		192.168.1.0
+	)
+}

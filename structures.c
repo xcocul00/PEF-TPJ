@@ -40,6 +40,15 @@ void free_router(router_elementPTR *element){
 	free(element->password);
 }
 
+void empty_router(router_elementPTR *element){
+	element->name=" ";
+	element->banner_mode=false;
+	element->banner_message=" ";
+	element->password=" ";
+	element->password_type=0;
+	element->vty_num=0;
+	element->interface_list=" ";
+}
 /* HELPFULL functions
 * functions just print structure informations
 * debug only

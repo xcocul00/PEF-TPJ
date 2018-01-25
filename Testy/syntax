@@ -25,15 +25,3 @@ R1 {
 		192.168.1.1
 	)
 }
-
-R2 {
-	banner motd #ahoj#
-	password vty 0-3 heslo
-	
-		int eth1 (
-		192.168.1.1
-		255.255.255.0
-		no
-	)
-
-}

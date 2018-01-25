@@ -1,5 +1,5 @@
 NAME=parser
-TESTS=tests
+TESTS=testy-scanner
 TESTSCANNER=scanner-test
 
 CC=gcc
