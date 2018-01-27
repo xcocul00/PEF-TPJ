@@ -271,7 +271,7 @@ void protokol_block(int x, protocol_elementPTR *protocols){
 */
 void main_body(router_elementPTR *router){
 	char *tmp=(char *) malloc(sizeof(char) * 100);
-	char *tmp2=(char *) malloc(sizeof(char) * 100);
+	//char *tmp2=(char *) malloc(sizeof(char) * 100);
 	strcpy(tmp,"!\n!\n");
 	token *tok=init_token();
 	tok=get_token();
@@ -301,7 +301,7 @@ void main_body(router_elementPTR *router){
 				init_protocol_elem(&protocols);
 				protokol_block(tok->type,&protocols);
 				get_protocol_string(&protocols);
-				strcat(tmp2,get_protocol_string(&protocols));
+				strcat(tmp,get_protocol_string(&protocols));
 				tok=get_token();
 			}
 			else
