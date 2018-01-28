@@ -277,6 +277,7 @@ void main_body(router_elementPTR *router){
 	tok=get_token();
 	while(tok->type!=TYPE_BLOCK_END){
 		if(tok->type==END_OF_FILE){
+			ERROR(ERR_SYN,"Symbol } missing");	
 			break;
 		}
 		else if(tok->type==TYPE_BANNER){
