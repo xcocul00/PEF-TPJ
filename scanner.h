@@ -32,7 +32,7 @@ typedef enum {
 	TYPE_INT,
 	TYPE_SHUTDOWN,
 	TYPE_NO,
-	TYPE_RIP,
+	TYPE_RIP,			//18
 	TYPE_RIPV2,
 	TYPE_EIGRP,
 	TYPE_OSPF,
@@ -50,6 +50,8 @@ typedef enum {
 	ERR_OK,
 	ERR_PARAM, //bad params
 	ERR_FILE,  //file empty
+	ERR_SYN,   // syntax error
+	ERR_SEM,   // semantic error
 }errors;
 
 

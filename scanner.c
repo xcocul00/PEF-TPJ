@@ -252,6 +252,7 @@ token * get_token(){
 * output -> exit code with error message
 */
 void ERROR(errors code, const char* message){
-	fprintf(stderr,"ERR:%d, %s\n",code,message);
+	if(code!=0)
+		fprintf(stderr,"ERR:%d, %s\n",code,message);
 	exit(code);
 }

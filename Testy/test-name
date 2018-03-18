@@ -1,4 +1,4 @@
-R1 {
+{
 	banner motd #ahoj#
 	password aux heslo
 	int eth1 (
