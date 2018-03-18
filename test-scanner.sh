@@ -32,3 +32,4 @@ echo "chyby v teste 8:"
 diff Testy/test8.o Testy/test8.output>>Testy/result8.o 
 echo "chyby v teste 9:"
 diff Testy/test-eof.o Testy/test-eof.output>>Testy/result-eof.o 
+
