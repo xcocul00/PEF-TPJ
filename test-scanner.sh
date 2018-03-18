@@ -11,8 +11,5 @@ echo "Vykonavam testy"
 ./scanner-test Testy/test6 >>Testy/test6.o 2>Testy/6.err
 ./scanner-test Testy/test7 >>Testy/test7.o 2>Testy/7.err
 ./scanner-test Testy/test8 >>Testy/test8.o 2>Testy/8.err
-./scanner-test Testy/test-eof >>Testy/test-eof.o 2>Testy/eof.err
-
-echo "Porovnavam vysledky"
 
 
